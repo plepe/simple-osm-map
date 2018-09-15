@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "async": "^2.6.1",
+    "boundingbox": "^0.1.2",
     "leaflet": "^1.3.4",
     "leaflet-maskcanvas": "^1.0.0"
   },

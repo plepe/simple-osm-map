@@ -1,19 +1,17 @@
-const httpGet = require('./httpGet')
+const boundingbox = require('boundingbox')
 const async = {
   each: require('async/each'),
   eachLimit: require('async/eachLimit')
 }
 
+const httpGet = require('./httpGet')
+
 window.onload = function () {
-  var map = L.map('map').setView([51.505, -0.09], 13);
+  var map = L.map('map')
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
-
-  L.marker([51.5, -0.09]).addTo(map)
-    .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-    .openPopup();
 
   let coverageLayer1 = L.TileLayer.maskCanvas({
     radius: 600,
@@ -82,6 +80,15 @@ window.onload = function () {
             let data = Object.values(coverageData)
             coverageLayer1.setData(data)
             coverageLayer2.setData(data)
+
+            let bounds = new BoundingBox(data[0])
+            data.slice(1).forEach(
+              (value) => {
+                bounds.extend(value)
+              }
+            )
+
+            map.fitBounds(bounds.toLeaflet())
           }
         )
       }

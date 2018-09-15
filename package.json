@@ -4,6 +4,7 @@
     "watch": "watchify -d src/index.js -o dist/map.js -v"
   },
   "dependencies": {
+    "async": "^2.6.1",
     "leaflet": "^1.3.4",
     "leaflet-maskcanvas": "^1.0.0"
   },

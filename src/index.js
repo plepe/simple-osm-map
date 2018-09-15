@@ -37,7 +37,7 @@ window.onload = function () {
   let elements = {}
   let coverageData = {}
 
-  httpGet('schlosspenz_aktuell.json', {}, (err, result) => {
+  httpGet('data.json', {}, (err, result) => {
     if (err) {
       console.log(err)
       return alert("Can't download geojson file")

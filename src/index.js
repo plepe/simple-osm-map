@@ -30,6 +30,9 @@ window.onload = function () {
   let routeLayer = L.featureGroup()
   map.addLayer(routeLayer)
 
+  let stopLayer = L.featureGroup()
+  map.addLayer(stopLayer)
+
   let routes = []
   let elements = {}
   let coverageData = {}
@@ -79,6 +82,17 @@ window.onload = function () {
                     color: route.tags.route === 'tram' ? '#ff0000' : '#0000ff'
                   })
                   routeLayer.addLayer(way)
+                }
+
+                if (member.role === 'stop' && member.type === 'node') {
+                  let way = L.circleMarker([ element.lat, element.lon ],
+                  {
+                    radius: 3,
+                    weight: 0,
+                    fillColor: route.tags.route === 'tram' ? '#ff0000' : '#0000ff',
+                    fillOpacity: 1
+                  })
+                  stopLayer.addLayer(way)
                 }
 
                 done()

@@ -104,16 +104,18 @@ window.onload = function () {
                 }
 
                 if (member.role === 'stop' && member.type === 'node') {
-                  let way = L.circleMarker([ element.lat, element.lon ],
-                  {
-                    radius: 4,
-                    weight: 0,
-                    fillColor: route.tags.route in routeTypes ? routeTypes[route.tags.route].color : '#000000',
-                    fillOpacity: 1
-                  })
-                  stopLayer.addLayer(way)
+                  if (!member.feature) {
+                    member.feature = L.circleMarker([ element.lat, element.lon ],
+                    {
+                      radius: 4,
+                      weight: 0,
+                      fillColor: route.tags.route in routeTypes ? routeTypes[route.tags.route].color : '#000000',
+                      fillOpacity: 1
+                    })
+                    stopLayer.addLayer(member.feature)
+                  }
 
-                  way.bindPopup(element.routes.map(route => route.tags.name).join('<br>'))
+                  member.feature.bindPopup(element.routes.map(route => route.tags.name).join('<br>'))
                 }
 
                 done()

@@ -83,6 +83,11 @@ window.onload = function () {
                   return done()
                 }
 
+                if (!element.routes) {
+                  element.routes = []
+                }
+                element.routes.push(route)
+
                 if (member.role === 'stop') {
                   if (!(memberId in coverageData)) {
                     coverageData[memberId] = [ element.lat, element.lon ]
@@ -101,12 +106,14 @@ window.onload = function () {
                 if (member.role === 'stop' && member.type === 'node') {
                   let way = L.circleMarker([ element.lat, element.lon ],
                   {
-                    radius: 3,
+                    radius: 4,
                     weight: 0,
                     fillColor: route.tags.route in routeTypes ? routeTypes[route.tags.route].color : '#000000',
                     fillOpacity: 1
                   })
                   stopLayer.addLayer(way)
+
+                  way.bindPopup(element.routes.map(route => route.tags.name).join('<br>'))
                 }
 
                 done()

@@ -36,6 +36,9 @@ window.onload = function () {
   })
   map.addLayer(coverageLayer2)
 
+  let markerLayer = L.featureGroup()
+  map.addLayer(markerLayer)
+
   let routeLayer = L.featureGroup()
   map.addLayer(routeLayer)
 
@@ -58,6 +61,18 @@ window.onload = function () {
     }
 
     result = JSON.parse(result.body)
+
+    if ('marker' in result) {
+      result.marker.forEach(
+        (marker) => {
+          let feature = L.marker([ marker.lat, marker.lon ]).addTo(markerLayer)
+
+          if ('text' in marker) {
+            feature.bindPopup(marker.text)
+          }
+        }
+      )
+    }
 
     async.eachLimit(result.elements, 32,
       (element, done) => {

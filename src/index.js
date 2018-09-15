@@ -6,6 +6,15 @@ const async = {
 
 const httpGet = require('./httpGet')
 
+const routeTypes = {
+  'tram': {
+    color: '#ff0000'
+  },
+  'bus': {
+    color: '#0000ff'
+  }
+}
+
 window.onload = function () {
   var map = L.map('map')
 
@@ -16,14 +25,14 @@ window.onload = function () {
   let coverageLayer1 = L.TileLayer.maskCanvas({
     radius: 600,
     useAbsoluteRadius: true,
-    opacity: 0.5
+    opacity: 0.3
   })
   map.addLayer(coverageLayer1)
 
   let coverageLayer2 = L.TileLayer.maskCanvas({
     radius: 300,
     useAbsoluteRadius: true,
-    opacity: 0.5
+    opacity: 0.2
   })
   map.addLayer(coverageLayer2)
 
@@ -84,7 +93,7 @@ window.onload = function () {
                   let way = L.polyline(element.geometry.map((geom => [ geom.lat, geom.lon ])),
                   {
                     weight: 1.5,
-                    color: route.tags.route === 'tram' ? '#ff0000' : '#0000ff'
+                    color: route.tags.route in routeTypes ? routeTypes[route.tags.route].color : '#000000'
                   })
                   routeLayer.addLayer(way)
                 }
@@ -94,7 +103,7 @@ window.onload = function () {
                   {
                     radius: 3,
                     weight: 0,
-                    fillColor: route.tags.route === 'tram' ? '#ff0000' : '#0000ff',
+                    fillColor: route.tags.route in routeTypes ? routeTypes[route.tags.route].color : '#000000',
                     fillOpacity: 1
                   })
                   stopLayer.addLayer(way)

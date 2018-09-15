@@ -27,6 +27,9 @@ window.onload = function () {
   })
   map.addLayer(coverageLayer2)
 
+  let routeLayer = L.featureGroup()
+  map.addLayer(routeLayer)
+
   let routes = []
   let elements = {}
   let coverageData = {}
@@ -67,6 +70,15 @@ window.onload = function () {
                   if (!(memberId in coverageData)) {
                     coverageData[memberId] = [ element.lat, element.lon ]
                   }
+                }
+
+                if (member.role === '' && member.type === 'way') {
+                  let way = L.polyline(element.geometry.map((geom => [ geom.lat, geom.lon ])),
+                  {
+                    weight: 1.5,
+                    color: route.tags.route === 'tram' ? '#ff0000' : '#0000ff'
+                  })
+                  routeLayer.addLayer(way)
                 }
 
                 done()

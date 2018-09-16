@@ -26,6 +26,10 @@ class OSMDB {
   }
 
   get (type, id) {
+    if (!id && type.match(/\//)) {
+      return this.elements[type]
+    }
+
     return this.elements[type + '/' + id]
   }
 

@@ -5,6 +5,7 @@ const async = {
 }
 
 const httpGet = require('./httpGet')
+const convertFromXML = require('./convertFromXML')
 
 const routeTypes = {
   'tram': {
@@ -49,18 +50,30 @@ window.onload = function () {
   let elements = {}
   let coverageData = {}
 
-  let file = 'data.json'
+  function assembleGeometry (element) {
+    if ('geometry' in element) {
+      return element.geometry
+    }
+
+    return element.nodes.map(nodeId => elements['node/' + nodeId])
+  }
+
+  let file = 'data.osm'
   if (location.search) {
     file = location.search.substr(1)
   }
 
-  httpGet(file, {}, (err, result) => {
+  httpGet(file, { type: 'auto' }, (err, result) => {
     if (err) {
       console.log(err)
       return alert("Can't download geojson file " + file + '.json')
     }
 
-    result = JSON.parse(result.body)
+    if (result.request.responseXML) {
+      result = convertFromXML(result.request.responseXML)
+    } else {
+      result = JSON.parse(result.body)
+    }
 
     if ('marker' in result) {
       result.marker.forEach(
@@ -110,7 +123,8 @@ window.onload = function () {
                 }
 
                 if (member.role === '' && member.type === 'way') {
-                  let way = L.polyline(element.geometry.map((geom => [ geom.lat, geom.lon ])),
+                  let geometry = assembleGeometry(element)
+                  let way = L.polyline(geometry.map((geom => [ geom.lat, geom.lon ])),
                   {
                     weight: 1.5,
                     color: route.tags.route in routeTypes ? routeTypes[route.tags.route].color : '#000000'

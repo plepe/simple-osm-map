@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+const fs = require('fs')
+const DOMParser = require('xmldom').DOMParser
+
+const convertFromXML = require('./src/convertFromXML')
+const OSMDB = require('./src/OSMDB')
+
+if (process.argv.length < 4) {
+  console.log('Usage: ./extract_relation <inputFile> <outputFile>')
+  console.log('You may use OSM JSON or OSM XML as input')
+  console.log('You may use OSM JSON as output')
+  process.exit(1)
+}
+
+let content = fs.readFileSync(process.argv[2])
+let result
+try {
+  result = JSON.parse(content)
+} catch (e) {
+  content = new DOMParser().parseFromString(content.toString(), 'text/xml')
+  result = convertFromXML(content.getElementsByTagName('osm')[0])
+}
+
+let toExport = {}
+
+let db = new OSMDB()
+db.read(result,
+  (err) => {
+    let routes = db.routes.filter(route => route.tags.ref == '57A')
+
+    routes.forEach(
+      (route) => {
+        toExport[route.type + '/' + route.id] = true
+
+        route.members.forEach(
+          (member) => {
+            toExport[member.type + '/' + member.ref] = true
+            let el = db.get(member.type, member.ref)
+
+            if (el && el.type === 'way' && !el.geometry) {
+              el.nodes.forEach(
+                (node) => {
+                  toExport['node/' + node] = true
+                }
+              )
+            }
+          }
+        )
+      }
+    )
+
+    let elements = Object.keys(toExport)
+      .map(id => db.get(id))
+      .filter(el => el)
+
+    fs.writeFileSync(process.argv[3], JSON.stringify({
+      elements
+    }, null, '  '))
+  }
+)

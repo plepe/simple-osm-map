@@ -3,7 +3,7 @@ module.exports = function convertFromXML (xml) {
     elements: []
   }
 
-  let current = xml.firstChild.firstChild
+  let current = xml.firstChild
   while (current) {
     let element = {}
 

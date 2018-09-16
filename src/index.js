@@ -62,7 +62,7 @@ window.onload = function () {
     }
 
     if (result.request.responseXML) {
-      result = convertFromXML(result.request.responseXML)
+      result = convertFromXML(result.request.responseXML.firstChild)
     } else {
       result = JSON.parse(result.body)
     }

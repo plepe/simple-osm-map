@@ -26,7 +26,8 @@ let toExport = {}
 let db = new OSMDB()
 db.read(result,
   (err) => {
-    let routes = db.routes.filter(route => route.tags.ref == '57A')
+    let routes = db.routes
+    //let routes = db.routes.filter(route => [ '10A', '52', '10', '60', '57A' ].indexOf(route.tags.ref) !== -1)
 
     routes.forEach(
       (route) => {

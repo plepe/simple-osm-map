@@ -7,6 +7,7 @@ const escapeHtml = require('escape-html')
 
 const httpGet = require('./httpGet')
 const convertFromXML = require('./convertFromXML')
+const OSMDB = require('./OSMDB')
 
 const routeTypes = {
   'tram': {
@@ -47,17 +48,7 @@ window.onload = function () {
   let stopLayer = L.featureGroup()
   map.addLayer(stopLayer)
 
-  let routes = []
-  let elements = {}
   let coverageData = {}
-
-  function assembleGeometry (element) {
-    if ('geometry' in element) {
-      return element.geometry
-    }
-
-    return element.nodes.map(nodeId => elements['node/' + nodeId])
-  }
 
   let file = 'data.osm'
   if (location.search) {
@@ -88,24 +79,15 @@ window.onload = function () {
       )
     }
 
-    async.eachLimit(result.elements, 32,
-      (element, done) => {
-        let id = element.type + '/' + element.id
-        elements[id] = element
-
-        if (element.type === 'relation' && element.tags && element.tags.type === 'route') {
-          routes.push(element)
-        }
-
-        done()
-      },
+    let db = new OSMDB()
+    db.read(result,
       (err) => {
-        async.eachLimit(routes, 4,
+        async.eachLimit(db.routes, 4,
           (route, done) => {
             async.each(route.members,
               (member, done) => {
                 let memberId = member.type + '/' + member.ref
-                let element = elements[memberId]
+                let element = db.get(member.type, member.ref)
 
                 if (!element) {
                   console.log("Can't find element " + memberId)
@@ -124,7 +106,7 @@ window.onload = function () {
                 }
 
                 if (member.role === '' && member.type === 'way') {
-                  let geometry = assembleGeometry(element)
+                  let geometry = db.assembleGeometry(element)
                   let way = L.polyline(geometry.map((geom => [ geom.lat, geom.lon ])),
                   {
                     weight: 1.5,

@@ -3,6 +3,7 @@ const async = {
   each: require('async/each'),
   eachLimit: require('async/eachLimit')
 }
+const escapeHtml = require('escape-html')
 
 const httpGet = require('./httpGet')
 const convertFromXML = require('./convertFromXML')
@@ -144,7 +145,10 @@ window.onload = function () {
                     stopLayer.addLayer(member.feature)
                   }
 
-                  member.feature.bindPopup(element.routes.map(route => route.tags.name).join('<br>'))
+                  member.feature.bindPopup(
+                    '<b>' + escapeHtml(element.tags.name) + '</b><br>' +
+                    element.routes.map(route => escapeHtml(route.tags.name)).join('<br>')
+                  )
                 }
 
                 done()

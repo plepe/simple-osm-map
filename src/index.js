@@ -49,12 +49,12 @@ window.onload = function () {
   let elements = {}
   let coverageData = {}
 
-  let file = 'data'
+  let file = 'data.json'
   if (location.search) {
     file = location.search.substr(1)
   }
 
-  httpGet(file + '.json', {}, (err, result) => {
+  httpGet(file, {}, (err, result) => {
     if (err) {
       console.log(err)
       return alert("Can't download geojson file " + file + '.json')

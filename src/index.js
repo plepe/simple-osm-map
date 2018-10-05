@@ -64,16 +64,37 @@ window.onload = function () {
     overpassFrontend,
     query: 'relation[route]',
     minZoom: 0,
+    members: true,
     feature: {
       markerSymbol: '',
-      style:
-        {
-          nodeFeature: 'CircleMarker',
-          radius: 4,
-          weight: 0,
-          fillColor: '#000000',
-          fillOpacity: 1
+      styles: [],
+    },
+    memberFeature: {
+      pre: function (el) {
+      },
+      title: '<b>{{ tags.name }}</b>',
+      body: (el) => {
+        console.log(el)
+        if (el.masters) {
+          return el.masters.map(route => escapeHtml(route.tags.name)).join('<br>')
         }
+      },
+      style: function (el) {
+        if (el.type === 'node') {
+          return {
+            nodeFeature: 'CircleMarker',
+            radius: 4,
+            width: 0,
+            fillColor: '#000000',
+            fillOpacity: 1
+          }
+        } else {
+          return {
+            width: 1.5,
+            color: '#000000',
+          }
+        }
+      }
     }
   })
 

@@ -4,10 +4,11 @@ const async = {
   eachLimit: require('async/eachLimit')
 }
 const escapeHtml = require('escape-html')
+const OverpassFrontend = require('overpass-frontend')
+const OverpassLayer = require('overpass-layer')
 
 const httpGet = require('./httpGet')
 const convertFromXML = require('./convertFromXML')
-const OSMDB = require('./OSMDB')
 
 const routeTypes = {
   'tram': {
@@ -18,8 +19,10 @@ const routeTypes = {
   }
 }
 
+global.overpassFrontend
+
 window.onload = function () {
-  var map = L.map('map')
+  var map = L.map('map').setView([ 48, 16 ], 10)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -55,107 +58,24 @@ window.onload = function () {
     file = location.search.substr(1)
   }
 
-  httpGet(file, { type: 'auto' }, (err, result) => {
-    if (err) {
-      console.log(err)
-      return alert("Can't download geojson file " + file + '.json')
-    }
+  overpassFrontend = new OverpassFrontend(file)
 
-    if (result.request.responseXML) {
-      result = convertFromXML(result.request.responseXML.firstChild)
-    } else {
-      result = JSON.parse(result.body)
-    }
-
-    if ('marker' in result) {
-      result.marker.forEach(
-        (marker) => {
-          let feature = L.marker([ marker.lat, marker.lon ]).addTo(markerLayer)
-
-          if ('text' in marker) {
-            feature.bindPopup(marker.text)
-          }
+  overpassLayer = new OverpassLayer({
+    overpassFrontend,
+    query: 'relation[route]',
+    minZoom: 0,
+    feature: {
+      markerSymbol: '',
+      style:
+        {
+          nodeFeature: 'CircleMarker',
+          radius: 4,
+          weight: 0,
+          fillColor: '#000000',
+          fillOpacity: 1
         }
-      )
     }
-
-    let db = new OSMDB()
-    db.read(result,
-      (err) => {
-        async.eachLimit(db.routes, 4,
-          (route, done) => {
-            async.each(route.members,
-              (member, done) => {
-                let memberId = member.type + '/' + member.ref
-                let element = db.get(member.type, member.ref)
-
-                if (!element) {
-                  console.log("Can't find element " + memberId)
-                  return done()
-                }
-
-                if (!element.routes) {
-                  element.routes = []
-                }
-                element.routes.push(route)
-
-                if (member.role === 'stop') {
-                  if (!(memberId in coverageData)) {
-                    coverageData[memberId] = [ element.lat, element.lon ]
-                  }
-                }
-
-                if (member.role === '' && member.type === 'way') {
-                  let geometry = db.assembleGeometry(element)
-                  let way = L.polyline(geometry.map((geom => [ geom.lat, geom.lon ])),
-                  {
-                    weight: 1.5,
-                    color: route.tags.route in routeTypes ? routeTypes[route.tags.route].color : '#000000'
-                  })
-                  routeLayer.addLayer(way)
-                }
-
-                if (member.role === 'stop' && member.type === 'node') {
-                  if (!member.feature) {
-                    member.feature = L.circleMarker([ element.lat, element.lon ],
-                    {
-                      radius: 4,
-                      weight: 0,
-                      fillColor: route.tags.route in routeTypes ? routeTypes[route.tags.route].color : '#000000',
-                      fillOpacity: 1
-                    })
-                    stopLayer.addLayer(member.feature)
-                  }
-
-                  member.feature.bindPopup(
-                    '<b>' + escapeHtml(element.tags.name) + '</b><br>' +
-                    element.routes.map(route => escapeHtml(route.tags.name)).join('<br>')
-                  )
-                }
-
-                done()
-              },
-              (err) => {
-                done(err)
-              }
-            )
-          },
-          (err) => {
-            let data = Object.values(coverageData)
-            coverageLayer1.setData(data)
-            coverageLayer2.setData(data)
-
-            let bounds = new BoundingBox(data[0])
-            data.slice(1).forEach(
-              (value) => {
-                bounds.extend(value)
-              }
-            )
-
-            map.fitBounds(bounds.toLeaflet())
-          }
-        )
-      }
-    )
   })
+
+  overpassLayer.addTo(map)
 }

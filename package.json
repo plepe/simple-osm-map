@@ -1,4 +1,7 @@
 {
+  "name": "pt-coverage-map",
+  "description": "Interactive map that shows coverage around public transport routes. Uses offline data (includes script for downloading data).",
+  "version": "1.0.0",
   "scripts": {
     "build": "browserify -g browserify-css src/index.js -o dist/map.js",
     "lint": "standard --fix src/*.js",
@@ -17,5 +20,9 @@
     "standard": "^12.0.1",
     "watchify": "^3.11.0",
     "xmldom": "^0.1.27"
-  }
+  },
+  "main": "src/index.js",
+  "repository": "https://github.com/plepe/pt-coverage-map",
+  "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
+  "license": "GPL-3.0"
 }

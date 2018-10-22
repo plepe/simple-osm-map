@@ -1,14 +1,9 @@
-const boundingbox = require('boundingbox')
-const async = {
-  each: require('async/each'),
-  eachLimit: require('async/eachLimit')
-}
+/* global L:false */
+
+const BoundingBox = require('boundingbox')
 const escapeHtml = require('escape-html')
 const OverpassFrontend = require('overpass-frontend')
 const OverpassLayer = require('overpass-layer')
-
-const httpGet = require('./httpGet')
-const convertFromXML = require('./convertFromXML')
 
 const routeTypes = {
   'tram': {
@@ -22,14 +17,14 @@ const routeTypes = {
   }
 }
 
-global.overpassFrontend
+let overpassFrontend
 
 window.onload = function () {
   var map = L.map('map')
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map)
 
   let coverageLayer1 = L.TileLayer.maskCanvas({
     radius: 600,
@@ -45,29 +40,23 @@ window.onload = function () {
   })
   map.addLayer(coverageLayer2)
 
-  let routeLayer = L.featureGroup()
-  map.addLayer(routeLayer)
-
-  let stopLayer = L.featureGroup()
-  map.addLayer(stopLayer)
-
   let coverageData = []
 
   let file = 'data.osm'
-  if (location.search) {
-    file = location.search.substr(1)
+  if (window.location.search) {
+    file = window.location.search.substr(1)
   }
 
   overpassFrontend = new OverpassFrontend(file)
 
-  overpassLayer = new OverpassLayer({
+  let overpassLayer = new OverpassLayer({
     overpassFrontend,
     query: 'relation[route]',
     minZoom: 0,
     members: true,
     feature: {
       markerSymbol: '',
-      styles: [],
+      styles: []
     },
     memberFeature: {
       pre: function (el) {
@@ -124,12 +113,20 @@ window.onload = function () {
     {
       members: true,
       memberCallback: (err, el) => {
+        if (err) {
+          return window.alert(err)
+        }
+
         if (el.type === 'node') {
           coverageData.push([ el.geometry.lat, el.geometry.lon ])
         }
       }
     },
     (err, route) => {
+      if (err) {
+        return window.alert(err)
+      }
+
       if (bounds) {
         bounds.extend(route.bounds)
       } else {
@@ -137,6 +134,10 @@ window.onload = function () {
       }
     },
     (err) => {
+      if (err) {
+        return window.alert(err)
+      }
+
       if (bounds) {
         map.fitBounds(bounds.toLeaflet())
       }

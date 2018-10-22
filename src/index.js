@@ -54,7 +54,7 @@ window.onload = function () {
   let stopLayer = L.featureGroup()
   map.addLayer(stopLayer)
 
-  let coverageData = {}
+  let coverageData = []
 
   let file = 'data.osm'
   if (location.search) {
@@ -114,6 +114,12 @@ window.onload = function () {
     'relation[type=route]',
     { minlon: -180, maxlon: 180, minlat: -90, maxlat: 90 },
     {
+      members: true,
+      memberCallback: (err, el) => {
+        if (el.type === 'node') {
+          coverageData.push([ el.geometry.lat, el.geometry.lon ])
+        }
+      }
     },
     (err, route) => {
       if (bounds) {
@@ -126,6 +132,9 @@ window.onload = function () {
       if (bounds) {
         map.fitBounds(bounds.toLeaflet())
       }
+
+      coverageLayer1.setData(coverageData)
+      coverageLayer2.setData(coverageData)
     }
   )
 }

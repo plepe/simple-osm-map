@@ -25,7 +25,7 @@ const routeTypes = {
 global.overpassFrontend
 
 window.onload = function () {
-  var map = L.map('map').setView([ 48, 16 ], 4)
+  var map = L.map('map')
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -107,8 +107,6 @@ window.onload = function () {
     }
   })
 
-  overpassLayer.addTo(map)
-
   let bounds
   overpassFrontend.BBoxQuery(
     'relation[type=route]',
@@ -135,6 +133,8 @@ window.onload = function () {
 
       coverageLayer1.setData(coverageData)
       coverageLayer2.setData(coverageData)
+
+      overpassLayer.addTo(map)
     }
   )
 }

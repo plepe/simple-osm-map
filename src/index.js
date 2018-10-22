@@ -16,6 +16,9 @@ const routeTypes = {
   },
   'bus': {
     color: '#0000ff'
+  },
+  'default': {
+    color: '#000000'
   }
 }
 
@@ -71,10 +74,16 @@ window.onload = function () {
     },
     memberFeature: {
       pre: function (el) {
+        el._routeType = routeTypes.default
+        if (el.masters.length) {
+          let type = el.masters[0].tags.route
+          if (type in routeTypes) {
+            el._routeType = routeTypes[type]
+          }
+        }
       },
       title: '<b>{{ tags.name }}</b>',
       body: (el) => {
-        console.log(el)
         if (el.masters) {
           return el.masters.map(route => escapeHtml(route.tags.name)).join('<br>')
         }
@@ -85,13 +94,13 @@ window.onload = function () {
             nodeFeature: 'CircleMarker',
             radius: 4,
             width: 0,
-            fillColor: '#000000',
+            fillColor: el._routeType.color,
             fillOpacity: 1
           }
         } else {
           return {
             width: 1.5,
-            color: '#000000',
+            color: el._routeType.color
           }
         }
       }

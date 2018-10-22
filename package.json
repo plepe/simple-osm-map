@@ -1,6 +1,7 @@
 {
   "scripts": {
     "build": "browserify -g browserify-css src/index.js -o dist/map.js",
+    "lint": "standard --fix src/*.js",
     "watch": "watchify -g browserify-css -d src/index.js -o dist/map.js -v"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
   },
   "devDependencies": {
     "browserify": "^16.2.2",
+    "standard": "^12.0.1",
     "watchify": "^3.11.0",
     "xmldom": "^0.1.27"
   }

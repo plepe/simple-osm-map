@@ -45,9 +45,6 @@ window.onload = function () {
   })
   map.addLayer(coverageLayer2)
 
-  let markerLayer = L.featureGroup()
-  map.addLayer(markerLayer)
-
   let routeLayer = L.featureGroup()
   map.addLayer(routeLayer)
 
@@ -107,6 +104,19 @@ window.onload = function () {
     }
   })
 
+  let markerLayer = new OverpassLayer({
+    overpassFrontend,
+    query: 'node[marker]',
+    minZoom: 0,
+    feature: {
+      title: '{{ tags.marker }}',
+      style: {
+        nodeFeature: 'Marker'
+      },
+      markerSymbol: ''
+    }
+  })
+
   let bounds
   overpassFrontend.BBoxQuery(
     'relation[type=route]',
@@ -135,6 +145,7 @@ window.onload = function () {
       coverageLayer2.setData(coverageData)
 
       overpassLayer.addTo(map)
+      markerLayer.addTo(map)
     }
   )
 }

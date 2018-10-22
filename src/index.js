@@ -25,7 +25,7 @@ const routeTypes = {
 global.overpassFrontend
 
 window.onload = function () {
-  var map = L.map('map').setView([ 48, 16 ], 10)
+  var map = L.map('map').setView([ 48, 16 ], 4)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -108,4 +108,24 @@ window.onload = function () {
   })
 
   overpassLayer.addTo(map)
+
+  let bounds
+  overpassFrontend.BBoxQuery(
+    'relation[type=route]',
+    { minlon: -180, maxlon: 180, minlat: -90, maxlat: 90 },
+    {
+    },
+    (err, route) => {
+      if (bounds) {
+        bounds.extend(route.bounds)
+      } else {
+        bounds = new BoundingBox(route.bounds)
+      }
+    },
+    (err) => {
+      if (bounds) {
+        map.fitBounds(bounds.toLeaflet())
+      }
+    }
+  )
 }

@@ -7,6 +7,14 @@ const parser = new ArgumentParser({
   description: 'Loads specified routes from OpenStreetMap Overpass API and saves them to a .osm file'
 })
 
+parser.addArgument(
+  [ '-f', '--file' ],
+  {
+    help: 'File to write data to (default: data.osm)',
+    defaultValue: 'data.osm'
+  }
+)
+
 let args = parser.parseArgs()
 
 const query = fs.readFileSync('get_data.txt')
@@ -18,6 +26,6 @@ request(
     body: query
   },
   (err, httpReq, body) => {
-    fs.writeFileSync('data.osm', body)
+    fs.writeFileSync(args.file, body)
   }
 )

@@ -35,10 +35,18 @@ parser.addArgument(
     nargs: '*'
   }
 )
+parser.addArgument(
+  [ '--format' ],
+  {
+    help: 'Format to load, either "XML" or "JSON". XML can be modified by OSM tools, e.g. JOSM.',
+    choices: [ 'XML', 'JSON' ],
+    defaultValue: 'XML'
+  }
+)
 
 let args = parser.parseArgs()
 
-let query = '[out:xml];('
+let query = '[out:' + args.format.toLowerCase() + '];('
 
 if (args.bbox) {
   query += 'relation[route~"^(' + args.types.join('|') + ')$"](' + args.bbox + ');'

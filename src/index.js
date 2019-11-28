@@ -5,18 +5,7 @@ const escapeHtml = require('escape-html')
 const OverpassFrontend = require('overpass-frontend')
 const OverpassLayer = require('overpass-layer')
 
-const routeTypes = {
-  'tram': {
-    color: '#ff0000'
-  },
-  'bus': {
-    color: '#0000ff'
-  },
-  'default': {
-    color: '#000000'
-  }
-}
-
+const routeTypes = require('./routeTypes')
 let overpassFrontend
 
 window.onload = function () {

@@ -27,13 +27,21 @@ parser.addArgument(
     nargs: '*'
   }
 )
+parser.addArgument(
+  [ '-t', '--types' ],
+  {
+    help: 'When querying for a bbox, load routes of the specified types, e.g. "-t subway tram".',
+    defaultValue: [ 'train', 'subway', 'monorail', 'tram', 'trolleybus', 'bus', 'aerialway', 'ferry' ],
+    nargs: '*'
+  }
+)
 
 let args = parser.parseArgs()
 
 let query = '[out:xml];('
 
 if (args.bbox) {
-  query += 'relation[route~"^(train|subway|monorail|tram|trolleybus|bus|aerialway|ferry)$"](' + args.bbox + ');'
+  query += 'relation[route~"^(' + args.types.join('|') + ')$"](' + args.bbox + ');'
 }
 if (args.id) {
   query += args.id

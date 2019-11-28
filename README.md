@@ -4,6 +4,5 @@ Interactive map that shows coverage around public transport routes. Uses offline
 ## Installation
 ```sh
 npm install
-npm run build
 ./get_data.sh
 ```

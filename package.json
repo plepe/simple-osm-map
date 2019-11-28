@@ -3,6 +3,7 @@
   "description": "Interactive map that shows coverage around public transport routes. Uses offline data (includes script for downloading data).",
   "version": "1.0.0",
   "scripts": {
+    "prepare": "npm run build",
     "build": "browserify -g browserify-css src/index.js -o dist/map.js",
     "lint": "standard --fix src/*.js",
     "watch": "watchify -g browserify-css -d src/index.js -o dist/map.js -v"

@@ -17,6 +17,7 @@
     "overpass-layer": "^2.0.0"
   },
   "devDependencies": {
+    "argparse": "^1.0.10",
     "browserify": "^16.2.2",
     "request": "^2.88.0",
     "standard": "^12.0.1",

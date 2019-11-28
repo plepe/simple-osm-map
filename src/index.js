@@ -56,7 +56,16 @@ window.onload = function () {
           let type = el.masters[0].tags.route
           if (type in routeTypes) {
             el._routeType = routeTypes[type]
+
+            if (el.masters[0].tags.colour) {
+              // comment the next line to force default colors
+              el._color = el.masters[0].tags.colour
+            }
           }
+        }
+
+        if (!el._color) {
+          el._color = el._routeType.color
         }
       },
       title: '<b>{{ tags.name }}</b>',
@@ -71,13 +80,13 @@ window.onload = function () {
             nodeFeature: 'CircleMarker',
             radius: 4,
             width: 0,
-            fillColor: el._routeType.color,
+            fillColor: el._color,
             fillOpacity: 1
           }
         } else {
           return {
             width: 1.5,
-            color: el._routeType.color
+            color: el._color
           }
         }
       }

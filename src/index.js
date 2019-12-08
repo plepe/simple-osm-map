@@ -9,29 +9,15 @@ const routeTypes = require('./routeTypes')
 let overpassFrontend
 
 window.onload = function () {
-  var map = L.map('map')
+  var map = L.map('map', { maxZoom: 22 })
 
   map.attributionControl.setPrefix('<a target="_blank" href="https://github.com/plepe/pt-coverage-map/">pt-coverage-map</a>')
+  map.setView([ 48.16148, 16.31786 ], 20)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18
   }).addTo(map)
-
-  let coverageLayer1 = L.TileLayer.maskCanvas({
-    radius: 600,
-    useAbsoluteRadius: true,
-    opacity: 0.3
-  })
-  map.addLayer(coverageLayer1)
-
-  let coverageLayer2 = L.TileLayer.maskCanvas({
-    radius: 300,
-    useAbsoluteRadius: true,
-    opacity: 0.2
-  })
-  map.addLayer(coverageLayer2)
-
-  let coverageData = []
 
   let file = 'data.osm'
   if (window.location.search) {
@@ -39,59 +25,7 @@ window.onload = function () {
   }
 
   overpassFrontend = new OverpassFrontend(file)
-
-  let overpassLayer = new OverpassLayer({
-    overpassFrontend,
-    query: 'relation[route]',
-    minZoom: 0,
-    members: true,
-    feature: {
-      markerSymbol: '',
-      styles: []
-    },
-    memberFeature: {
-      pre: function (el) {
-        el._routeType = routeTypes.default
-        if (el.masters && el.masters.length) {
-          let type = el.masters[0].tags.route
-          if (type in routeTypes) {
-            el._routeType = routeTypes[type]
-
-            if (el.masters[0].tags.colour) {
-              // comment the next line to force default colors
-              el._color = el.masters[0].tags.colour
-            }
-          }
-        }
-
-        if (!el._color) {
-          el._color = el._routeType.color
-        }
-      },
-      title: '<b>{{ tags.name }}</b>',
-      body: (el) => {
-        if (el.masters) {
-          return el.masters.map(route => escapeHtml(route.tags.name)).join('<br>')
-        }
-      },
-      style: function (el) {
-        if (el.type === 'node') {
-          return {
-            nodeFeature: 'CircleMarker',
-            radius: 4,
-            width: 0,
-            fillColor: el._color,
-            fillOpacity: 1
-          }
-        } else {
-          return {
-            width: 1.5,
-            color: el._color
-          }
-        }
-      }
-    }
-  })
+  global.overpassFrontend = overpassFrontend
 
   let markerLayer = new OverpassLayer({
     overpassFrontend,
@@ -105,48 +39,4 @@ window.onload = function () {
       markerSymbol: ''
     }
   })
-
-  let bounds
-  overpassFrontend.BBoxQuery(
-    'relation[type=route]',
-    { minlon: -180, maxlon: 180, minlat: -90, maxlat: 90 },
-    {
-      members: true,
-      memberCallback: (err, el) => {
-        if (err) {
-          return window.alert(err)
-        }
-
-        if (el.type === 'node') {
-          coverageData.push([ el.geometry.lat, el.geometry.lon ])
-        }
-      }
-    },
-    (err, route) => {
-      if (err) {
-        return window.alert(err)
-      }
-
-      if (bounds) {
-        bounds.extend(route.bounds)
-      } else {
-        bounds = new BoundingBox(route.bounds)
-      }
-    },
-    (err) => {
-      if (err) {
-        return window.alert(err)
-      }
-
-      if (bounds) {
-        map.fitBounds(bounds.toLeaflet())
-      }
-
-      coverageLayer1.setData(coverageData)
-      coverageLayer2.setData(coverageData)
-
-      overpassLayer.addTo(map)
-      markerLayer.addTo(map)
-    }
-  )
 }

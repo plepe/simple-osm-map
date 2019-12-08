@@ -12,8 +12,7 @@
   "dependencies": {
     "boundingbox": "^0.1.2",
     "escape-html": "^1.0.3",
-    "leaflet": "^1.3.4",
-    "leaflet-maskcanvas": "^1.0.0",
+    "leaflet": "^1.5.1",
     "overpass-frontend": "^2.0.0",
     "overpass-layer": "^2.0.0"
   },

@@ -4,8 +4,11 @@ const BoundingBox = require('boundingbox')
 const escapeHtml = require('escape-html')
 const OverpassFrontend = require('overpass-frontend')
 const OverpassLayer = require('overpass-layer')
+const yaml = require('yaml')
 
 const routeTypes = require('./routeTypes')
+const httpGet = require('./httpGet')
+
 let overpassFrontend
 
 window.onload = function () {
@@ -23,6 +26,22 @@ window.onload = function () {
   if (window.location.search) {
     file = window.location.search.substr(1)
   }
+
+  httpGet('style.yaml', {}, (err, content) => {
+    let style = yaml.parse(content.body)
+
+    for (let k in style) {
+      new OverpassLayer({
+        overpassFrontend,
+        query: k,
+        minZoom: 0,
+        feature: {
+          style: style[k],
+          markerSymbol: ''
+        }
+      }).addTo(map)
+    }
+  })
 
   overpassFrontend = new OverpassFrontend(file)
   global.overpassFrontend = overpassFrontend

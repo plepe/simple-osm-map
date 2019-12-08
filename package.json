@@ -14,7 +14,8 @@
     "escape-html": "^1.0.3",
     "leaflet": "^1.5.1",
     "overpass-frontend": "^2.0.0",
-    "overpass-layer": "^2.0.0"
+    "overpass-layer": "^2.0.0",
+    "yaml": "^1.7.2"
   },
   "devDependencies": {
     "argparse": "^1.0.10",

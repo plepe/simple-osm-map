@@ -30,17 +30,34 @@ window.onload = function () {
   httpGet('style.yaml', {}, (err, content) => {
     let style = yaml.parse(content.body)
 
-    for (let k in style) {
+    if (!style.layers) {
+      style.layers = []
+    }
+
+    style.layers.forEach(def => {
+      if (!def.feature) {
+        def.feature = {}
+      }
+
+      if (!('markerSymbol' in def.feature)) {
+        def.feature.markerSymbol = ''
+      }
+
+      if (!('title' in def.feature)) {
+        def.feature.title = '{{ tags.name }}'
+      }
+
+      if (!('body' in def.feature)) {
+        def.feature.body = '{{ tags.description }}'
+      }
+
       new OverpassLayer({
         overpassFrontend,
-        query: k,
+        query: def.query,
         minZoom: 0,
-        feature: {
-          style: style[k],
-          markerSymbol: ''
-        }
+        feature: def.feature
       }).addTo(map)
-    }
+    })
   })
 
   overpassFrontend = new OverpassFrontend(file)

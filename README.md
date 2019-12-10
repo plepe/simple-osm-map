@@ -15,6 +15,26 @@ Browse to http://localhost:8080
 
 To specify a different file, use http://localhost:8080/?filename.osm
 
+## Example style.yaml
+```yaml
+layers:
+- query: way[highway]
+  feature:
+    title: Road
+    style:
+      color: white
+      width: 5
+
+- query: |
+    (
+    nwr[natural=wood];
+    nwr[landuse=forest];
+    )
+  feature:
+    style:
+      fillColor: #007f00
+```
+
 ## Development
 When developing, use the following command to automatically update the compiled JS file - with debugging information included:
 ```sh

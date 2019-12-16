@@ -35,7 +35,11 @@ window.onload = function () {
 
   overpassFrontend = new OverpassFrontend(overpass)
 
-  httpGet('data/style.yaml', {}, (err, content) => {
+  if (!options.style) {
+    options.style = 'style.yaml'
+  }
+
+  httpGet('data/' + options.style, {}, (err, content) => {
     let style = yaml.parse(content.body)
 
     if (!style.layers) {

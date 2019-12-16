@@ -24,6 +24,12 @@ node get_data --help  # how to modify parameters
 node get_data
 ```
 
+### Alternate style file
+Specify an alternate style file with the style parameter:
+* http://localhost:8080/?style=foobar.yaml
+
+This would load `foobar.yaml` from the data/ directory.
+
 ## Example style.yaml
 ```yaml
 layers:

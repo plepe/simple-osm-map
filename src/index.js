@@ -61,18 +61,4 @@ window.onload = function () {
   })
 
   overpassFrontend = new OverpassFrontend(file)
-  global.overpassFrontend = overpassFrontend
-
-  let markerLayer = new OverpassLayer({
-    overpassFrontend,
-    query: 'node[marker]',
-    minZoom: 0,
-    feature: {
-      title: '{{ tags.marker }}',
-      style: {
-        nodeFeature: 'Marker'
-      },
-      markerSymbol: ''
-    }
-  })
 }

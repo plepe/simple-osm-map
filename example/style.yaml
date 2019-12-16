@@ -1,0 +1,16 @@
+layers:
+- query: way[highway]
+  feature:
+    title: Road ({{ tags.highway }})
+    style:
+      color: white
+      width: 5
+
+- query: |
+    (
+    nwr[leisure=park];
+    nwr[landuse=forest];
+    )
+  feature:
+    style:
+      fillColor: #007f00

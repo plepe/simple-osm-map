@@ -6,21 +6,30 @@ Example: ![Screenshot](./screenshot.png)
 ## Installation
 ```sh
 npm install
-node get_data --help  # how to modify parameters
-node get_data
+cp -r example/ data/ # Modify the style.yaml in data/
 npm start  # start built-in http server (of course, you can use Apache2 too)
 ```
 
 Browse to http://localhost:8080
 
-To specify a different file, use http://localhost:8080/?filename.osm
+### Alternate .osm file
+You could specify a (modified) OSM file as alternative data soure:
+* http://localhost:8080/?filename.osm
+
+This would load `filename.osm` from the data/ directory.
+
+The following script can help download data from Overpass API to a .osm file:
+```sh
+node get_data --help  # how to modify parameters
+node get_data
+```
 
 ## Example style.yaml
 ```yaml
 layers:
 - query: way[highway]
   feature:
-    title: Road
+    title: Road ({{ tags.highway }})
     style:
       color: white
       width: 5

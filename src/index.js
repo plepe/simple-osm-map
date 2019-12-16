@@ -22,12 +22,14 @@ window.onload = function () {
     maxZoom: 18
   }).addTo(map)
 
-  let file = 'data.osm'
+  let overpass = '//overpass-api.de/api/interpreter'
   if (window.location.search) {
-    file = window.location.search.substr(1)
+    overpass = 'data/' + window.location.search.substr(1)
   }
 
-  httpGet('style.yaml', {}, (err, content) => {
+  overpassFrontend = new OverpassFrontend(overpass)
+
+  httpGet('data/style.yaml', {}, (err, content) => {
     let style = yaml.parse(content.body)
 
     if (!style.layers) {
@@ -59,6 +61,4 @@ window.onload = function () {
       }).addTo(map)
     })
   })
-
-  overpassFrontend = new OverpassFrontend(file)
 }

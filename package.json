@@ -22,6 +22,7 @@
     "argparse": "^1.0.10",
     "browserify": "^16.2.2",
     "http-server": "^0.12.0",
+    "query-string": "^6.9.0",
     "request": "^2.88.0",
     "standard": "^12.0.1",
     "watchify": "^3.11.0",

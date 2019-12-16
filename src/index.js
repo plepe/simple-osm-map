@@ -5,6 +5,7 @@ const escapeHtml = require('escape-html')
 const OverpassFrontend = require('overpass-frontend')
 const OverpassLayer = require('overpass-layer')
 const yaml = require('yaml')
+const queryString = require('query-string')
 
 const routeTypes = require('./routeTypes')
 const httpGet = require('./httpGet')
@@ -23,8 +24,13 @@ window.onload = function () {
   }).addTo(map)
 
   let overpass = '//overpass-api.de/api/interpreter'
+  let options = {}
   if (window.location.search) {
-    overpass = 'data/' + window.location.search.substr(1)
+    options = queryString.parse(window.location.search)
+  }
+
+  if (options.data) {
+    overpass = 'data/' + options.data
   }
 
   overpassFrontend = new OverpassFrontend(overpass)

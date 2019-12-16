@@ -14,7 +14,7 @@ Browse to http://localhost:8080
 
 ### Alternate .osm file
 You could specify a (modified) OSM file as alternative data soure:
-* http://localhost:8080/?filename.osm
+* http://localhost:8080/?data=filename.osm
 
 This would load `filename.osm` from the data/ directory.
 

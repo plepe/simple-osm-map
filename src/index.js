@@ -18,11 +18,6 @@ window.onload = function () {
   map.attributionControl.setPrefix('<a target="_blank" href="https://github.com/plepe/pt-coverage-map/">pt-coverage-map</a>')
   map.setView([ 48.16148, 16.31786 ], 20)
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 18
-  }).addTo(map)
-
   let overpass = '//overpass-api.de/api/interpreter'
   let options = {}
   if (window.location.search) {
@@ -41,6 +36,26 @@ window.onload = function () {
 
   httpGet('data/' + options.style, {}, (err, content) => {
     let style = yaml.parse(content.body)
+
+    if (style.tileLayers && style.tileLayers.length === 1) {
+      let layer = style.tileLayers[0]
+      L.tileLayer(layer.url, layer).addTo(map)
+    } else if (style.tileLayers && style.tileLayers.length > 1) {
+      let layers = {}
+      style.tileLayers.forEach((layer, i) => {
+        let l = L.tileLayer(layer.url, layer)
+        layers[layer.title || ('Layer #' + i)] = l
+        if (i === 0) {
+          l.addTo(map)
+        }
+      })
+      L.control.layers(layers).addTo(map)
+    } else {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
+      }).addTo(map)
+    }
 
     if (!style.layers) {
       style.layers = []

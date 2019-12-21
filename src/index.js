@@ -6,14 +6,34 @@ const OverpassFrontend = require('overpass-frontend')
 const OverpassLayer = require('overpass-layer')
 const yaml = require('yaml')
 const queryString = require('query-string')
+const hash = require('sheet-router/hash')
 
 const routeTypes = require('./routeTypes')
 const httpGet = require('./httpGet')
 
 let overpassFrontend
+let map
+
+function hashApply (loc) {
+  console.log(loc)
+  let state = queryString.parse(loc)
+
+  if ('map' in state) {
+    let parts = state.map.split('/')
+    state.zoom = parts[0]
+    state.lat = parts[1]
+    state.lon = parts[2]
+
+    if (typeof map.getZoom() === 'undefined') {
+      map.setView({ lat: state.lat, lng: state.lon }, state.zoom)
+    } else {
+      map.flyTo({ lat: state.lat, lng: state.lon }, state.zoom)
+    }
+  }
+}
 
 window.onload = function () {
-  var map = L.map('map', { maxZoom: 22 })
+  map = L.map('map', { maxZoom: 22 })
 
   map.attributionControl.setPrefix('<a target="_blank" href="https://github.com/plepe/pt-coverage-map/">pt-coverage-map</a>')
 
@@ -30,11 +50,41 @@ window.onload = function () {
   overpassFrontend = new OverpassFrontend(overpass)
   if (options.data) {
     overpassFrontend.on('load', (meta) => {
-      if (meta.bounds) {
+      if (meta.bounds && typeof map.getZoom() === 'undefined') {
         map.fitBounds(meta.bounds.toLeaflet())
       }
     })
   }
+
+  hash(loc => {
+    hashApply(loc.substr(1))
+  })
+  if (location.hash) {
+    hashApply(location.hash)
+  }
+
+  map.on('moveend', () => {
+    let center = map.getCenter().wrap()
+    let zoom = parseFloat(map.getZoom()).toFixed(0)
+
+    var locPrecision = 5
+    if (zoom) {
+      locPrecision =
+        zoom > 16 ? 5
+        : zoom > 8 ? 4
+        : zoom > 4 ? 3
+        : zoom > 2 ? 2
+        : zoom > 1 ? 1
+        : 0
+    }
+
+    link = 'map=' +
+      zoom + '/' +
+      center.lat.toFixed(locPrecision) + '/' +
+      center.lng.toFixed(locPrecision)
+
+    history.replaceState(null, null, '#' + link)
+  })
 
   if (!options.style) {
     options.style = 'style.yaml'

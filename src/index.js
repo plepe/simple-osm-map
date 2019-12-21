@@ -16,7 +16,6 @@ window.onload = function () {
   var map = L.map('map', { maxZoom: 22 })
 
   map.attributionControl.setPrefix('<a target="_blank" href="https://github.com/plepe/pt-coverage-map/">pt-coverage-map</a>')
-  map.setView([ 48.16148, 16.31786 ], 20)
 
   let overpass = '//overpass-api.de/api/interpreter'
   let options = {}
@@ -29,6 +28,13 @@ window.onload = function () {
   }
 
   overpassFrontend = new OverpassFrontend(overpass)
+  if (options.data) {
+    overpassFrontend.on('load', (meta) => {
+      if (meta.bounds) {
+        map.fitBounds(meta.bounds.toLeaflet())
+      }
+    })
+  }
 
   if (!options.style) {
     options.style = 'style.yaml'

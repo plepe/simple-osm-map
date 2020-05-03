@@ -13,6 +13,7 @@
     "boundingbox": "^0.1.2",
     "escape-html": "^1.0.3",
     "leaflet": "^1.5.1",
+    "leaflet-polylinedecorator": "git+https://github.com/plepe/Leaflet.PolylineDecorator.git",
     "leaflet-polylineoffset": "^1.1.1",
     "overpass-frontend": "^2.0.0",
     "overpass-layer": "^2.0.0",

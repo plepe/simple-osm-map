@@ -4,9 +4,9 @@
   "version": "1.1.0",
   "scripts": {
     "prepare": "npm run build",
-    "build": "browserify -g browserify-css src/index.js -o dist/map.js",
+    "build": "browserify -p esmify -g browserify-css src/index.js -o dist/map.js",
     "lint": "standard --fix src/*.js",
-    "watch": "watchify -g browserify-css -d src/index.js -o dist/map.js -v",
+    "watch": "watchify -p esmify -g browserify-css -d src/index.js -o dist/map.js -v",
     "start": "http-server ./"
   },
   "dependencies": {
@@ -17,12 +17,13 @@
     "leaflet-polylineoffset": "^1.1.1",
     "overpass-frontend": "^2.0.0",
     "overpass-layer": "^2.0.0",
-    "yaml": "^1.7.2"
+    "yaml": "^1.9.2"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.12.0",
     "argparse": "^1.0.10",
     "browserify": "^16.2.2",
+    "esmify": "^2.1.1",
     "http-server": "^0.12.0",
     "query-string": "^6.9.0",
     "request": "^2.88.0",

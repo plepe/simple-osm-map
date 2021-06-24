@@ -1,9 +1,10 @@
-# pt-coverage-map
-Interactive map that shows coverage around public transport routes. Uses offline data (includes script for downloading data).
+# Simple OSM Map
+Create simple, interactive maps from data in OpenStreetMap format with a custom style
 
 Example: ![Screenshot](./screenshot.png)
 
 ## Installation
+### As standalone project
 ```sh
 npm install
 cp -r example/ data/ # Modify the style.yaml in data/
@@ -12,8 +13,9 @@ npm start  # start built-in http server (of course, you can use Apache2 too)
 
 Browse to http://localhost:8080
 
+## Usage
 ### Alternate .osm file
-You could specify a (modified) OSM file as alternative data soure:
+BY default, simple-osm-map uses Overpass API for loading data. Alternatively, you could specify a file in OSM format as data soure:
 * http://localhost:8080/?data=filename.osm
 
 This would load `filename.osm` from the data/ directory.

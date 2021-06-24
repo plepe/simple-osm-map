@@ -1,6 +1,6 @@
 {
-  "name": "pt-coverage-map",
-  "description": "Interactive map that shows coverage around public transport routes. Uses offline data (includes script for downloading data).",
+  "name": "simple-osm-map",
+  "description": "Create simple, interactive maps from data in OpenStreetMap format with a custom style",
   "version": "1.1.0",
   "scripts": {
     "prepare": "npm run build",
@@ -33,7 +33,7 @@
     "xmldom": "^0.1.27"
   },
   "main": "src/index.js",
-  "repository": "https://github.com/plepe/pt-coverage-map",
+  "repository": "https://github.com/plepe/simple-osm-map",
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
   "license": "GPL-3.0"
 }

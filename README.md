@@ -52,6 +52,19 @@ layers:
       fillColor: #007f00
 ```
 
+## Additional features
+### Panes
+```yaml
+panes:
+  casing:
+    zIndex: 399
+    opacity: 0.5
+  highlight:
+    zIndex: 401
+```
+
+Add additional panes. Set style options as sub-object, including 'zIndex'.
+
 ## Development
 When developing, use the following command to automatically update the compiled JS file - with debugging information included:
 ```sh

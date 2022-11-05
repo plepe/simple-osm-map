@@ -113,6 +113,17 @@ window.onload = function () {
       }).addTo(map)
     }
 
+    if (style.panes) {
+      for (const paneId in style.panes) {
+        const pane = map.createPane(paneId)
+        if (style.panes[paneId]) {
+          for (const k in style.panes[paneId]) {
+            pane.style[k] = style.panes[paneId][k]
+          }
+        }
+      }
+    }
+
     if (!style.layers) {
       style.layers = []
     }
